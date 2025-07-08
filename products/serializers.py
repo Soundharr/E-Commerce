@@ -19,3 +19,4 @@ class ProductSerializer(serializers.ModelSerializer):
             'stock', 'is_active', 'image', 'created_at', 'updated_at',
             'category', 'category_id'
         ]
+
