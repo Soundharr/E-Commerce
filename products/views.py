@@ -15,6 +15,12 @@ from rest_framework import generics
 from .models import Product
 from .serializers import ProductSerializer
 
+from django.http import JsonResponse
+
+def home(request):
+    return JsonResponse({"message": "Welcome to the E-Commerce API"})
+
+
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.filter(is_active=True).order_by('-created_at')
     serializer_class = ProductSerializer
