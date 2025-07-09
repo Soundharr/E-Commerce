@@ -1,11 +1,15 @@
 from rest_framework import serializers
 from .models import Product, Category
 
+
+# Category Serializer
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
+
+# Product Serializer
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
@@ -19,4 +23,3 @@ class ProductSerializer(serializers.ModelSerializer):
             'stock', 'is_active', 'image', 'created_at', 'updated_at',
             'category', 'category_id'
         ]
-
