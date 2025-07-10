@@ -69,16 +69,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Ecommerce.wsgi.application'
-import dj_database_url
 # Database config
+import os
+import dj_database_url
+
 DATABASES = {
     'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', 'mysql://root:OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD@shinkansen.proxy.rlwy.net:34595/railway'),
+        os.getenv(
+            'DATABASE_URL',
+            'mysql://root:OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD@shinkansen.proxy.rlwy.net:34595/ecommerce'  # <-- changed here
+        ),
         conn_max_age=600
     )
 }
-
 DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
