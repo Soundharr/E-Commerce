@@ -14,8 +14,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 # DEBUG mode
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-# Allowed hosts
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Allowed hosts - add your Render domain here or set DJANGO_ALLOWED_HOSTS in env variables
+ALLOWED_HOSTS = os.getenv(
+    'DJANGO_ALLOWED_HOSTS', 
+    'localhost,127.0.0.1,e-commerce-oagd.onrender.com'
+).split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -73,12 +76,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ecommerce',
         'USER': 'root',
-        'PASSWORD': 'Soundhar@123',  # <-- your actual MySQL root password here
+        'PASSWORD': 'Soundhar@123',  # Replace with your real password securely!
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
