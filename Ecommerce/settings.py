@@ -1,17 +1,25 @@
 import os
 from pathlib import Path
 import dj_database_url
+import pymysql
 
-# Build paths inside the project
+pymysql.install_as_MySQLdb()
+
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET KEY & DEBUG from environment variables
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-secret-key')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
+
+# DEBUG mode
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+
+# Allowed hosts
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -20,44 +28,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Your apps
-    'products',  # Make sure this app is correctly defined
+    'products',
 
     # Third-party apps
     'rest_framework',
     'corsheaders',
-    'storages',  # S3 support for media files
+    'storages',
 ]
 
-# AWS S3 Settings for storing media files
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Media files will be served from S3
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Local frontend URL for dev
-    "http://127.0.0.1:5173",  # Another local URL fallback
-    "https://yourfrontenddomain.com",  # Add your production frontend URL
-]
-
-# Django REST Framework Settings
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
-}
-
-# Middleware configuration
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files handling
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,7 +53,7 @@ ROOT_URLCONF = 'Ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [],  # Add your templates dirs if any
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,13 +67,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 
-# Database configuration
+# Database config
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", 
-        conn_max_age=600  
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ecommerce',
+        'USER': 'root',
+        'PASSWORD': 'Soundhar@123',  # <-- your actual MySQL root password here
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -101,19 +88,58 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Internationalization
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
 # Static files (CSS, JavaScript, images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Define default auto field for primary keys
+# Media files
+if DEBUG:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
+
+# CORS allowed origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://yourfrontenddomain.com",
+]
+
+# Django REST framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
+
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Security settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Whitenoise settings for static files
-WHITENOISE_AUTOREFRESH = DEBUG  # Refresh static files in development if DEBUG is True
+# Whitenoise static files refresh in dev
+WHITENOISE_AUTOREFRESH = DEBUG
 
-# Serving media files during development (only when DEBUG is True)
-
+# Add this to urls.py to serve media in development
+# from django.conf import settings
+# from django.conf.urls.static import static
+#
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
