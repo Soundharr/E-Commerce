@@ -8,20 +8,21 @@ pymysql.install_as_MySQLdb()
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Secret Key
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 
-# Debug
+# DEBUG mode
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-# Allowed Hosts
+# Allowed hosts - add your deployed domain here or via environment variable
 ALLOWED_HOSTS = os.getenv(
-    'DJANGO_ALLOWED_HOSTS',
+    'DJANGO_ALLOWED_HOSTS', 
     'localhost,127.0.0.1,e-commerce-oagd.onrender.com'
 ).split(',')
 
-# Installed apps
+# Application definition
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,20 +30,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Your app(s)
+    # Your apps
     'products',
 
-    # Third-party
+    # Third-party apps
     'rest_framework',
     'corsheaders',
     'storages',
 ]
 
-# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,11 +53,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Ecommerce.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [],  # Add your templates dirs if any
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,16 +69,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Ecommerce.wsgi.application'
-
-# Database
+import dj_database_url
+# Database config
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
+    'default': dj_database_url.parse(
+        os.getenv('DATABASE_URL', 'mysql://root:OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD@shinkansen.proxy.rlwy.net:34595/railway'),
+        conn_max_age=600
     )
 }
 
-# Password Validation
+DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -93,16 +94,16 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static files (CSS, JavaScript, images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 if DEBUG:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 else:
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -112,14 +113,14 @@ else:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
 
-# CORS
+# CORS allowed origins
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://yourfrontenddomain.com",  # Replace with actual domain
+    "https://yourfrontenddomain.com",
 ]
 
-# DRF
+# Django REST framework settings
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -127,11 +128,19 @@ REST_FRAMEWORK = {
     ]
 }
 
-# Default primary key
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security
+# Security settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Whitenoise auto refresh in dev
+# Whitenoise static files refresh in dev
 WHITENOISE_AUTOREFRESH = DEBUG
+
+# If you want to serve media files in development, add this to your Ecommerce/urls.py:
+#
+# from django.conf import settings
+# from django.conf.urls.static import static
+#
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
