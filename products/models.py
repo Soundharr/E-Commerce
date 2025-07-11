@@ -4,9 +4,7 @@ from django.core.validators import FileExtensionValidator
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     image = models.ImageField(
-        upload_to='category_images/',
-        null=True,
-        blank=True,
+        null=True, blank=True,
         validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])]
     )
 
@@ -23,9 +21,7 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     image = models.ImageField(
-        upload_to='product_images/',
-        null=True,
-        blank=True,
+        null=True, blank=True,
         validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])]
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,4 +29,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-
