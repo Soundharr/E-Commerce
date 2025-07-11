@@ -21,7 +21,7 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # Allowed hosts
 ALLOWED_HOSTS = os.getenv(
-    'DJANGO_ALLOWED_HOSTS', 
+    'DJANGO_ALLOWED_HOSTS',
     'localhost,127.0.0.1,e-commerce-oagd.onrender.com'
 ).split(',')
 
@@ -104,14 +104,21 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files: use local storage in dev, Cloudinary in prod
+# Media files configuration
 if DEBUG:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = f'https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/'
+    MEDIA_URL = f'https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/image/upload/'
+
+# Cloudinary config (optional but recommended for clarity)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
 
 # CORS allowed origins
 CORS_ALLOWED_ORIGINS = [
