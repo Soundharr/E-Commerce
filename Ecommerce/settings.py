@@ -1,28 +1,16 @@
 import os
 from pathlib import Path
-import dj_database_url
 import pymysql
 
-# Install MySQL driver as MySQLdb
 pymysql.install_as_MySQLdb()
 
-# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'your-secret-key'  # Replace with your actual secret key
+SECRET_KEY = 'your-secret-key'  # Replace this before production
+DEBUG = True  # Change to False on production
 
-# DEBUG mode (default True for dev)
-DEBUG = True  # Set to False in production
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'e-commerce-oagd.onrender.com']
 
-# Allowed hosts
-ALLOWED_HOSTS = [
-    'localhost', 
-    '127.0.0.1', 
-    'e-commerce-oagd.onrender.com',
-]
-
-# Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,7 +26,6 @@ INSTALLED_APPS = [
     'cloudinary_storage',
 ]
 
-# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -56,7 +43,7 @@ ROOT_URLCONF = 'Ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # add template dirs here if any
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,16 +57,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 
-# Database configuration
 DATABASES = {
-    'default': dj_database_url.parse(
-        'mysql://root:OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD@shinkansen.proxy.rlwy.net:34595/ecommerce',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ecommerce',
+        'USER': 'root',
+        'PASSWORD': 'OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD',
+        'HOST': 'shinkansen.proxy.rlwy.net',
+        'PORT': '34595',
+    }
 }
-DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -87,50 +75,45 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files configuration
-if DEBUG:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-else:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary config (optional but recommended for clarity)
+# Use local storage in debug mode, Cloudinary in production
+DEFAULT_FILE_STORAGE = (
+    'django.core.files.storage.FileSystemStorage'
+    if DEBUG else
+    'cloudinary_storage.storage.MediaCloudinaryStorage'
+)
+
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dh3qfybx7',  # Replace with your Cloudinary cloud name
-    'API_KEY': '521625646711493',  # Replace with your Cloudinary API key
-    'API_SECRET': '3_rrb9qJp_zyBAm7eoA5GxPkcjE',  # Replace with your Cloudinary API secret
+    'CLOUD_NAME': 'dh3qfybx7',
+    'API_KEY': '521625646711493',
+    'API_SECRET': '3_rrb9qJp_zyBAm7eoA5GxPkcjE',
 }
 
-# CORS allowed origins
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://yourfrontenddomain.com",
+    "https://yourfrontenddomain.com",  # Replace with your deployed frontend
 ]
 
-# Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
+    ],
 }
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Whitenoise auto-refresh static files in dev
 WHITENOISE_AUTOREFRESH = DEBUG
