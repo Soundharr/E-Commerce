@@ -11,11 +11,22 @@ def home(request):
 class ProductListCreateView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
 
+    # def get_queryset(self):
+    #     queryset = Product.objects.filter(is_active=True).order_by('-created_at')
+    #     category_name = self.request.query_params.get('category')
+    #     if category_name:
+    #         category = Category.objects.filter(name=category_name).first()
+    #         if category:
+    #             queryset = queryset.filter(category=category)
+    #         else:
+    #             queryset = queryset.none()
+    #     return queryset
     def get_queryset(self):
         queryset = Product.objects.filter(is_active=True).order_by('-created_at')
         category_name = self.request.query_params.get('category')
         if category_name:
             category = Category.objects.filter(name=category_name).first()
+            print(f"Filtering products for category: {category_name}")  # Log the category being used
             if category:
                 queryset = queryset.filter(category=category)
             else:
