@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 import dj_database_url
 import pymysql
 
@@ -10,20 +9,18 @@ pymysql.install_as_MySQLdb()
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env file at project root
-load_dotenv(dotenv_path=BASE_DIR / '.env')
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-secret-key')
+SECRET_KEY = 'your-secret-key'  # Replace with your actual secret key
 
 # DEBUG mode (default True for dev)
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+DEBUG = True  # Set to False in production
 
 # Allowed hosts
-ALLOWED_HOSTS = os.getenv(
-    'DJANGO_ALLOWED_HOSTS',
-    'localhost,127.0.0.1,e-commerce-oagd.onrender.com'
-).split(',')
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    'e-commerce-oagd.onrender.com',
+]
 
 # Installed apps
 INSTALLED_APPS = [
@@ -76,10 +73,7 @@ WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 # Database configuration
 DATABASES = {
     'default': dj_database_url.parse(
-        os.getenv(
-            'DATABASE_URL',
-            'mysql://root:OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD@shinkansen.proxy.rlwy.net:34595/ecommerce'
-        ),
+        'mysql://root:OoDEztYIazMHvBDXIpvnMhWhDwRhMxiD@shinkansen.proxy.rlwy.net:34595/ecommerce',
         conn_max_age=600
     )
 }
@@ -110,16 +104,12 @@ if DEBUG:
 else:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-
-
-
 # Cloudinary config (optional but recommended for clarity)
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': 'dh3qfybx7',  # Replace with your Cloudinary cloud name
+    'API_KEY': '521625646711493',  # Replace with your Cloudinary API key
+    'API_SECRET': '3_rrb9qJp_zyBAm7eoA5GxPkcjE',  # Replace with your Cloudinary API secret
 }
-
 
 # CORS allowed origins
 CORS_ALLOWED_ORIGINS = [
