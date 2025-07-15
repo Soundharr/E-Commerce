@@ -16,6 +16,14 @@ class CategorySerializer(serializers.ModelSerializer):
         upload_result = cloudinary.uploader.upload(image)
         image_url = upload_result.get('secure_url')
         return Category.objects.create(image_url=image_url, **validated_data)
+    
+
+    def get_image(self, obj):
+        # Assuming 'image_url' is the field in the model, convert to a proper full URL
+        image_url = obj.image_url
+        if image_url.startswith("http"):
+            return image_url  # If it's already a full URL, return it
+        return f"https://e-commerce-oagd.onrender.com{image_url}" 
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -41,3 +49,10 @@ class ProductSerializer(serializers.ModelSerializer):
         image_url = upload_result.get('secure_url')
         validated_data['image_url'] = image_url
         return Product.objects.create(**validated_data)
+
+    def get_image(self, obj):
+        # Assuming 'image_url' is the field in the model, convert to a proper full URL
+        image_url = obj.image_url
+        if image_url.startswith("http"):
+            return image_url  # If it's already a full URL, return it
+        return f"https://e-commerce-oagd.onrender.com{image_url}" 
