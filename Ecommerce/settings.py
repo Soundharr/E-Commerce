@@ -112,6 +112,7 @@ else:
 
 
 
+
 # Cloudinary config (optional but recommended for clarity)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
