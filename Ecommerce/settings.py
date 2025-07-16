@@ -118,7 +118,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Adjust this according to your frontend
     "http://127.0.0.1:5173",
     "https://yourfrontenddomain.com",  # Replace with your deployed frontend domain
-    "https://soundharr.github.io/E-commerceFroentend/",  # Replace with your deployed frontend domain
+    "https://soundharr.github.io/E-commerceFroentend/",
+    "https://soundhar-e-commerceshopping.netlify.app/"  # Replace with your deployed frontend domain
 ]
 
 # Rest framework configuration for APIs
