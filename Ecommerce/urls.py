@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('products.urls')),  # Includes app-level URLs
+    path('shop/', include('shopping.urls')),  # Includes app-level URLs
 ]
 
 # Serve media files during development (only when DEBUG is True)
