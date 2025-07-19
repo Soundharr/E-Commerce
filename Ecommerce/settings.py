@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Django settings
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')  # Default for development; change for production
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1', 'https://soundhar-e-commerceshopping.netlify.app/').split(',')
 
 # Applications installed in the Django project
 INSTALLED_APPS = [
