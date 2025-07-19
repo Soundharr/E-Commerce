@@ -22,5 +22,6 @@ class AddressSerializer(serializers.ModelSerializer):
             'product_title',
             'quantity',
             'total_amount',
+            'date'
         ]
         read_only_fields = ['total_amount']  # it's auto-calculated

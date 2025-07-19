@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'products', # product app
     'shopping', # shopping app
+    'register', # register app
     'rest_framework',
     'corsheaders',
     'storages',
@@ -142,3 +143,18 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 WHITENOISE_AUTOREFRESH = DEBUG
 
 # Add any other settings you might need here...
+# === MailerSend SMTP settings ===
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailersend.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'MS_Ub08uE@test-p7kx4xwd7xvg9yjr.mlsender.net'
+EMAIL_HOST_PASSWORD = 'mssp.MB1ltQ7.x2p034733w7gzdrn.H6EPXnA'
+
+# ❗IMPORTANT: Must match a verified sender in MailerSend
+DEFAULT_FROM_EMAIL = 'MS_Ub08uE@test-p7kx4xwd7xvg9yjr.mlsender.net'
+
+# Optional: Twilio setup (disabled unless used)
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
+TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '')
