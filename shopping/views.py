@@ -1,39 +1,45 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from rest_framework.views import APIView
-from django.http import HttpResponse
-#import pandas as pd
-from io import BytesIO
-from .models import Address
-from .serializers import AddressSerializer
+from rest_framework.response import Response
+from .models import Order
+from .serializers import OrderSerializer
+from rest_framework.permissions import IsAuthenticated
 
-class AddressListCreateView(generics.ListCreateAPIView):
-    queryset = Address.objects.all()
-    serializer_class = AddressSerializer
+class OrderListCreateView(generics.ListCreateAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Address.objects.all()
-    serializer_class = AddressSerializer
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).order_by('-date')
 
-# class AddressExportExcelView(APIView):
-    # def get(self, request):
-    #     # Fetch all Address records
-    #     addresses = Address.objects.all()
-    #     serializer = AddressSerializer(addresses, many=True)
-    #     data = serializer.data
-        
-    #     # Convert serialized data to DataFrame
-    #     df = pd.DataFrame(data)
-        
-    #     # Create in-memory Excel file
-    #     output = BytesIO()
-    #     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-    #         df.to_excel(writer, index=False, sheet_name='Addresses')
-        
-    #     # Return response with Excel file for download
-    #     response = HttpResponse(
-    #         output.getvalue(),
-    #         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    #     )
-    #     response['Content-Disposition'] = 'attachment; filename=addresses.xlsx'
-        
-    #     return response
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Ensure user only accesses their own orders
+        return Order.objects.filter(user=self.request.user)
+
+class AddressTestView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        auth_header = request.headers.get('Authorization')
+        user = request.user
+        return Response({
+            "auth_header": auth_header,
+            "user": str(user),
+            "user_id": user.id if user.is_authenticated else None,
+        })
+
+class DebugAuthView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "user": str(request.user),
+            "auth": str(request.auth)
+        })

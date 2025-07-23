@@ -1,25 +1,25 @@
+from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
-# Load environment variables from the .env file
 load_dotenv()
 
-# Base directory of the project
+
+# Load environment variables from .env
+load_dotenv()
+
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Django settings
-SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')  # Default for development; change for production
+# Security settings
+SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1', 'https://soundhar-e-commerceshopping.netlify.app/').split(',')
-
 ALLOWED_HOSTS = os.getenv(
     'ALLOWED_HOSTS',
     'localhost,127.0.0.1,soundhar-e-commerceshopping.netlify.app'
 ).split(',')
 
-
-# Applications installed in the Django project
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,9 +27,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'products', # product app
-    'shopping', # shopping app
-    'register', # register app
+
+    # Your apps
+    'products',
+    'shopping',
+    'register',
+
+    # Third-party apps
     'rest_framework',
     'corsheaders',
     'storages',
@@ -37,7 +41,6 @@ INSTALLED_APPS = [
     'cloudinary_storage',
 ]
 
-# Middleware for handling requests
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -50,10 +53,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Root URL configuration
 ROOT_URLCONF = 'Ecommerce.urls'
 
-# Templates settings
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -69,10 +70,9 @@ TEMPLATES = [
     },
 ]
 
-# WSGI application to use for deployment
 WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 
-# Database configuration
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -84,7 +84,7 @@ DATABASES = {
     }
 }
 
-# Password validation
+# Password validators
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -92,75 +92,126 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Localization settings
+# Localization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, images)
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (images, documents, etc.)
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Storage configuration (local for development or Cloudinary for production)
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Custom User model
+AUTH_USER_MODEL = 'register.User'
+
+# REST Framework config
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),  # Set expiry time for access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),  # Set expiry time for refresh token
+}
+
+
+# CORS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://soundhar-e-commerceshopping.netlify.app",
+    "https://soundharr.github.io",
+    "http://localhost:3000",
+]
+
+# Cloudinary (media storage for production)
 DEFAULT_FILE_STORAGE = (
     'django.core.files.storage.FileSystemStorage'
     if DEBUG else
     'cloudinary_storage.storage.MediaCloudinaryStorage'
 )
 
-# Cloudinary configuration for media storage (production)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'your-cloud-name'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY', 'your-api-key'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'your-api-secret'),
 }
 
-# Allowed origins for cross-origin requests
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Adjust this according to your frontend
-    "http://127.0.0.1:5173",
-    "https://yourfrontenddomain.com",  # Replace with your deployed frontend domain
-    "https://soundhar-e-commerceshopping.netlify.app",
-    "https://soundharr.github.io",
-]
- # Replace with your deployed frontend domain
+# # Email settings (MailerSend)
+# # settings.py
 
-# Rest framework configuration for APIs
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
-}
-
-# Default auto field for models
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Secure headers for proxies in production
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Whitenoise auto-refresh for static files (useful in development)
-WHITENOISE_AUTOREFRESH = DEBUG
-
-# Add any other settings you might need here...
-# === MailerSend SMTP settings ===
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# MailerSend SMTP Settings
 EMAIL_HOST = 'smtp.mailersend.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'MS_Ub08uE@test-p7kx4xwd7xvg9yjr.mlsender.net'
-EMAIL_HOST_PASSWORD = 'mssp.MB1ltQ7.x2p034733w7gzdrn.H6EPXnA'
+EMAIL_PORT = 587  # or 2525 (both are TLS-supported)
+EMAIL_USE_TLS = True  # Use TLS connection
+EMAIL_HOST_USER = 'MS_Ub08uE@test-p7kx4xwd7xvg9yjr.mlsender.net'  # SMTP Username
+EMAIL_HOST_PASSWORD = 'mssp.MB1ltQ7.x2p034733w7gzdrn.H6EPXnA'  # SMTP Password
+DEFAULT_FROM_EMAIL = 'no-reply@yourdomain.com'  # Sender's email address (adjust this as needed)
 
-# ❗IMPORTANT: Must match a verified sender in MailerSend
-DEFAULT_FROM_EMAIL = 'MS_Ub08uE@test-p7kx4xwd7xvg9yjr.mlsender.net'
 
-# Optional: Twilio setup (disabled unless used)
+# Twilio (optional)
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '')
+
+# For deployed apps behind reverse proxies (e.g., on Render)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Whitenoise auto-refresh during development
+WHITENOISE_AUTOREFRESH = DEBUG
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.mailersend.net')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+
+
+
+
+# Email settings (MailerSend)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# # MailerSend SMTP Settings (Corrected)
+# EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.mailersend.net')  # Use environment variable or default to MailerSend
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Use environment variable or default to 587
+# EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'  # Ensure TLS is used by default
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'MS_Ub08uE@test-p7kx4xwd7xvg9yjr.mlsender.net')  # Use environment variable or default to your MailerSend user
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'mssp.MB1ltQ7.x2p034733w7gzdrn.H6EPXnA')  # Use environment variable or default to your MailerSend password
+# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@yourdomain.com')  # Use environment variable or default to 'no-reply@yourdomain.com'
+
+# # Optional: Use console backend for local development to see email output in the console (for testing)
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# # Twilio (optional)
+# TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
+# TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
+# TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '')
+
+# # For deployed apps behind reverse proxies (e.g., on Render)
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# # Whitenoise auto-refresh during development
+# WHITENOISE_AUTOREFRESH = DEBUG

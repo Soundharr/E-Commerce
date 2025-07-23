@@ -13,6 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'is_email_verified']
 
+
+
 class UserActivitySerializer(serializers.ModelSerializer):
     user_email = serializers.EmailField(source='user.email', read_only=True)
 
