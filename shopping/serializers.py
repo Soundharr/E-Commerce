@@ -174,3 +174,12 @@ class OrderSerializer(serializers.ModelSerializer):
             )
         except Exception as e:
             print(f"Error sending email to shop owner: {str(e)}")
+
+
+from rest_framework import serializers
+from .models import EnquiryForm
+
+class EnquiryFormSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EnquiryForm
+        fields = '__all__'

@@ -59,3 +59,40 @@ class OrderItem(models.Model):
     def product_image_url(self):
         """Fetch the product image URL from the related Product model."""
         return self.product.image_url if self.product.image_url else "https://via.placeholder.com/150"
+    
+
+from django.db import models
+
+class EnquiryForm(models.Model):
+    ENQUIRY_CHOICES = [
+        ('retail', 'Retail Purchase'),
+        ('wholesale', 'Wholesale Purchase'),
+    ]
+
+    PRODUCT_CHOICES = [
+        ('raw-cashews', 'Raw Cashews'),
+        ('roasted-cashews', 'Roasted Cashews'),
+        ('flavored-cashews', 'Flavored Cashews'),
+        ('cashew-nuts', 'Premium Cashew Nuts'),
+        ('bulk-cashews', 'Bulk Cashews'),
+        ('other', 'Other'),
+    ]
+
+    enquiry_type = models.CharField(max_length=20, choices=ENQUIRY_CHOICES, default='retail')
+    company_name = models.CharField(max_length=255)  # or 'name' depending on enquiry_type
+    contact_person = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10)
+    product_interest = models.CharField(max_length=50, choices=PRODUCT_CHOICES, blank=True)
+    quantity = models.CharField(max_length=100, blank=True)
+    message = models.TextField(blank=True)
+
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.contact_person} - {self.enquiry_type.title()}"
+
