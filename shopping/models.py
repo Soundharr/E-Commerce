@@ -19,6 +19,7 @@ class Order(models.Model):
     mobile = models.BigIntegerField()
 
     door_no = models.CharField(max_length=10)
+    street = models.CharField(max_length=50)
     area = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
