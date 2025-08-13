@@ -75,14 +75,27 @@ WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'ecommerce'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'ENGINE': 'django.db.backends.postgresql',  # ✅ Change from MySQL to PostgreSQL
+        'NAME': os.getenv('DB_NAME', 'cashewdb_sv77'),
+        'USER': os.getenv('DB_USER', 'cashewdb'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'PvzJ6vsscZpYZ0kug1PKh5OM3CfEnik5'),
+        'HOST': os.getenv('DB_HOST', 'dpg-d2e6v3be5dus73fkk650-a.oregon-postgres.render.com'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('DB_NAME', 'ecommerce'),
+#         'USER': os.getenv('DB_USER', 'root'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', ''),
+#         'HOST': os.getenv('DB_HOST', 'localhost'),
+#         'PORT': os.getenv('DB_PORT', '3306'),
+#     }
+# }
 
 # Password validators
 AUTH_PASSWORD_VALIDATORS = [
