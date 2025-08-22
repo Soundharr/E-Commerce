@@ -66,3 +66,20 @@ def enquiry_list(request):
             serializer.save()
             return Response({"message": "Enquiry submitted successfully!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# For admin
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from .models import Order
+from .serializers import OrderSerializer
+
+class AdminOrderCRUDView(generics.ListCreateAPIView):
+    queryset = Order.objects.all().order_by('-date')
+    serializer_class = OrderSerializer
+    permission_classes = [AllowAny]  # ⚠️ No authentication
+
+class AdminOrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [AllowAny]  # ⚠️ No authentication

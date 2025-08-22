@@ -95,7 +95,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'first_name', 'last_name', 'user_email', 'mobile',
-            'door_no', 'area', 'city', 'state', 'pincode', 'date',
+            'door_no', 'area','street','city', 'state', 'pincode', 'date',
             'total_amount', 'items',  # Updated field to 'items'
         ]
         read_only_fields = ['total_amount', 'user_email', 'date']
